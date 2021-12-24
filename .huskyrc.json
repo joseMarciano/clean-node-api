@@ -1,5 +1,5 @@
 {
     "hooks":{
-        "pre-commmit": "lint-staged"
+        "pre-commmit": "li3423nt-staged"
     }
 }
