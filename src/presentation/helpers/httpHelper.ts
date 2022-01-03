@@ -13,7 +13,7 @@ const serverError = (): HttpResponse =>
     body: new ServerError()
   });
 
-const ok = (body: any = {}): HttpResponse =>
+const ok = (body: any): HttpResponse =>
   ({
     statusCode: 200,
     body: body
