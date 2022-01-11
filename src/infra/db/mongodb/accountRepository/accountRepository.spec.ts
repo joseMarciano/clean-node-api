@@ -1,3 +1,4 @@
+import { AddAccountRepository } from '../../../../data/protocols/AddAccountRepository';
 import { MongoHelper } from '../helpers/mongoHelper';
 import { AccountMongoRepository } from './AccountMongoRepository';
 
@@ -10,8 +11,10 @@ describe('Account Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
+  const makeSut = (): AddAccountRepository => new AccountMongoRepository();
+
   test('Should return an account on succes', async () => {
-    const sut = new AccountMongoRepository();
+    const sut = makeSut();
 
     const account = await sut.add({
       name: 'any_name',
