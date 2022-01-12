@@ -8,7 +8,7 @@ describe('SignUp Routes', () => {
   });
 
   beforeEach(async () => {
-    await MongoHelper.getCollection('accounts').deleteMany({});
+    await (await MongoHelper.getCollection('accounts')).deleteMany({});
   });
 
   afterAll(async () => {
