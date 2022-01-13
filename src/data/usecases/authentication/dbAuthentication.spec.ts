@@ -49,11 +49,18 @@ describe('DbAuthentication', () => {
     expect(loadSpy).toHaveBeenCalledWith('any_email@mail.com');
   });
 
+  test('Should return null if LoadAccountByEmailReposiotry returns null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+    const loadSpy = jest.spyOn(loadAccountByEmailRepositoryStub, 'load');
+    await sut.auth(makeFakeAuthenticaction());
+    expect(loadSpy).toHaveBeenCalledWith('any_email@mail.com');
+  });
+
   test('Should throw if LoadAccountByEmailRepository throws', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(Promise.reject(new Error()));
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(Promise.resolve(null));
 
-    const promise = sut.auth(makeFakeAuthenticaction());
-    await expect(promise).rejects.toThrow();
+    const accessToken = await sut.auth(makeFakeAuthenticaction());
+    expect(accessToken).toBeNull();
   });
 });
