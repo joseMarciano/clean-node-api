@@ -1,6 +1,6 @@
 import { Authentication, AuthenticationModel } from '../../../domain/usecases/Authentication';
 import { InvalidParamError, MissingParamError } from '../../errors';
-import { badRequest, serverError, unauthorized } from '../../helpers/httpHelper';
+import { badRequest, ok, serverError, unauthorized } from '../../helpers/httpHelper';
 import { EmailValidator, HttpRequest } from '../signup/signupProtocols';
 import { LoginController } from './LoginController';
 
@@ -150,4 +150,14 @@ describe('Login Controller', () => {
 
     expect(isValidSpy).toHaveBeenCalledWith('any_email');
   });
+
+  test('Should return 200 if LoginController on success', async () => {
+    const { sut } = makeSut();
+
+    const httpRequest = makeFakeRequest();
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse).toEqual(ok('auth'))
+  })
 });
