@@ -69,6 +69,12 @@ describe('DbAuthentication', () => {
     const accessToken = await sut.auth(makeFakeAuthenticaction());
     expect(accessToken).toBeNull();
   });
+  test('Should return null if HashCompare returns false', async () => {
+    const { sut, hashCompareStub } = makeSut();
+    jest.spyOn(hashCompareStub, 'compare').mockReturnValueOnce(Promise.resolve(false));
+    const accessToken = await sut.auth(makeFakeAuthenticaction());
+    expect(accessToken).toBeNull();
+  });
 
   test('Should throw if LoadAccountByEmailRepository throws', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut();
