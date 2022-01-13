@@ -112,6 +112,21 @@ describe('Login Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticactionStub } = makeSut();
+
+    const spyAuthentication = jest.spyOn(authenticactionStub, 'auth');
+
+    const httpRequest = makeFakeRequest();
+
+    await sut.handle(httpRequest);
+
+    expect(spyAuthentication).toHaveBeenCalledWith({
+      email: 'any_email',
+      password: 'any_password'
+    });
+  })
+
   test('Should call EmailValidator with correct email', async () => {
     const { sut, emailValidatorStub } = makeSut();
 
