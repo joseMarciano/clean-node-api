@@ -78,6 +78,14 @@ describe('DbAuthentication', () => {
     await expect(promise).rejects.toThrow();
   });
 
+  test('Should throw if HashCompare throws', async () => {
+    const { sut, hashCompareStub } = makeSut();
+    jest.spyOn(hashCompareStub, 'compare').mockRejectedValueOnce(new Error());
+
+    const promise = sut.auth(makeFakeAuthenticaction());
+    await expect(promise).rejects.toThrow();
+  });
+
   test('Should call HashComparer with correct values', async () => {
     const { sut, hashCompareStub } = makeSut();
     const compareSpy = jest.spyOn(hashCompareStub, 'compare');
