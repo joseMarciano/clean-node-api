@@ -1,7 +1,18 @@
+import { Authentication, AuthenticationModel } from '../../../domain/usecases/Authentication';
 import { InvalidParamError, MissingParamError } from '../../errors';
 import { badRequest, serverError } from '../../helpers/httpHelper';
 import { EmailValidator, HttpRequest } from '../signup/signupProtocols';
 import { LoginController } from './LoginController';
+
+const makeAuthenticaction = (): Authentication => {
+  class AuthenticactionStub implements Authentication {
+    async auth (authenticationModel: AuthenticationModel): Promise<string> {
+      return Promise.resolve('auth');
+    }
+  }
+
+  return new AuthenticactionStub();
+}
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -15,14 +26,17 @@ const makeEmailValidator = (): EmailValidator => {
 interface SutTypes {
   sut: LoginController
   emailValidatorStub: EmailValidator
+  authenticactionStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator();
-  const sut = new LoginController(emailValidatorStub);
+  const authenticactionStub = makeAuthenticaction();
+  const sut = new LoginController(emailValidatorStub, authenticactionStub);
   return {
     sut,
-    emailValidatorStub
+    emailValidatorStub,
+    authenticactionStub
   }
 }
 
@@ -83,7 +97,19 @@ describe('Login Controller', () => {
 
     const httpResponse = await sut.handle(httpRequest);
 
-    expect(httpResponse).toEqual(serverError(new Error()))
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 500 if Authentication throws ', async () => {
+    const { sut, authenticactionStub } = makeSut();
+
+    jest.spyOn(authenticactionStub, 'auth').mockImplementationOnce(() => { throw new Error() });
+
+    const httpRequest = makeFakeRequest();
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 
   test('Should call EmailValidator with correct email', async () => {
