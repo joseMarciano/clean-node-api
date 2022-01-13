@@ -1,5 +1,5 @@
 import { AuthenticationModel } from '../../../domain/usecases/Authentication';
-import { LoadAccountByEmailRepository } from '../../protocols/LoadAccountByEmailRepository';
+import { LoadAccountByEmailRepository } from '../../protocols/db/LoadAccountByEmailRepository';
 import { AccountModel } from '../addaccount/dbAddAccountProtocols';
 import { DbAuthentication } from './DbAuthentication';
 

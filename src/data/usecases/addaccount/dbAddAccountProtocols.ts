@@ -1,4 +1,4 @@
 export * from '../../../domain/usecases/AddAccount';
 export * from '../../../domain/model/Account';
-export * from '../../protocols/Encrypter';
-export * from '../../protocols/AddAccountRepository';
+export * from '../../protocols/criptography/Encrypter';
+export * from '../../protocols/db/AddAccountRepository';
