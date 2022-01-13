@@ -1,7 +1,6 @@
 import { Authentication, AuthenticationModel } from '../../../domain/usecases/Authentication';
 import { InvalidParamError, MissingParamError } from '../../errors';
-import { Unauthorized } from '../../errors/Unauthorized';
-import { badRequest, serverError } from '../../helpers/httpHelper';
+import { badRequest, serverError, unauthorized } from '../../helpers/httpHelper';
 import { EmailValidator, HttpRequest } from '../signup/signupProtocols';
 import { LoginController } from './LoginController';
 
@@ -110,10 +109,7 @@ describe('Login Controller', () => {
 
     const httpResponse = await sut.handle(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 401,
-      body: new Unauthorized()
-    })
+    expect(httpResponse).toEqual(unauthorized())
   });
 
   test('Should return 500 if Authentication throws ', async () => {
