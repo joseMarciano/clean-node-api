@@ -1,7 +1,6 @@
 export class Unauthorized extends Error {
-  constructor (error = null as Error) {
+  constructor () {
     super('Unauthorized');
     this.name = 'Unauthorized'
-    this.stack = error?.stack
   }
 }
