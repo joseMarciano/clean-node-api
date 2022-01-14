@@ -26,7 +26,7 @@ export class DbAuthentication implements Authentication {
   }
 
   async auth (authenticationModel: AuthenticationModel): Promise<string> {
-    const account = await this.loadAccountByEmailRepository.load(authenticationModel.email);
+    const account = await this.loadAccountByEmailRepository.loadByEmail(authenticationModel.email);
     let passwordIsValid = false;
 
     if (account) {
