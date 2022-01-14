@@ -4,5 +4,5 @@ export * from '../../../domain/model/Account'
 
 export * from '../../protocols/criptography/HashCompare';
 export * from '../../protocols/criptography/Encrypter';
-export * from '../../protocols/db/LoadAccountByEmailRepository';
-export * from '../../protocols/db/UpdateAccessTokenRepository';
+export * from '../../protocols/db/account/LoadAccountByEmailRepository';
+export * from '../../protocols/db/account/UpdateAccessTokenRepository';
