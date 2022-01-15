@@ -13,14 +13,12 @@ services:
   api:
     container_name: api-container
     restart: always
-    # Quando eu uso o build, eu vou gerar uma imagem de acordo com meu Dockerfile e não vou baixar o dockerHub
-    build: .
-    # A prop image neste caso não serve para baixar uma imagem e sim para dar um nome para imagem gerada pela prop build
-    image: clean-node-api
+    image: node:14
+    working_dir: /usr/workspace/clean-node-api
+    command: bash -c "npm install --only=prod && npm run debug"
     volumes:
       - ./dist:/usr/workspace/clean-node-api/dist
       - ./package.json:/usr/workspace/clean-node-api/package.json
-    command: npm run debug
     ports:
       - "5050:5050"
       - "9222:9222"
