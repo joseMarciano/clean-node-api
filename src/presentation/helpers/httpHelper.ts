@@ -1,4 +1,4 @@
-import { ServerError } from '../errors';
+import { ServerError } from '../errors/ServerError';
 import { Unauthorized } from '../errors/Unauthorized';
 import { HttpResponse } from '../protocols/Http';
 
@@ -8,10 +8,10 @@ const badRequest = (error: Error): HttpResponse =>
     body: error
   });
 
-const unauthorized = (error?: Error): HttpResponse =>
+const unauthorized = (): HttpResponse =>
   ({
     statusCode: 401,
-    body: new Unauthorized(error)
+    body: new Unauthorized()
   });
 
 const serverError = (error: Error): HttpResponse =>
