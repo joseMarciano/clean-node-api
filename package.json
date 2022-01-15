@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "NODE_ENV=production node dist/main/server.js",
-    "debug": "NODE_ENV=production node --inspect=0.0.0.0:9222 --nolazy dist/main/server.js",
+    "debug": "NODE_ENV=production nodemon -L --watch ./dist --inspect=0.0.0.0:9222 --nolazy ./dist/main/server.js",
     "build": "rimraf dist && tsc --project tsconfig.build.json",
     "up": "npm run build && sudo docker-compose up",
     "down": "sudo docker-compose down",
@@ -49,6 +49,7 @@
     "fast-glob": "3.2.10",
     "jsonwebtoken": "8.5.1",
     "mongodb": "4.1.1",
+    "nodemon": "^2.0.15",
     "validator": "13.7.0"
   },
   "engines": {
