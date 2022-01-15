@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "NODE_ENV=production node dist/main/server.js",
+    "debug": "NODE_ENV=production node --inspect=0.0.0.0:9222 --nolazy dist/main/server.js",
     "build": "rimraf dist && tsc --project tsconfig.build.json",
     "up": "npm run build && sudo docker-compose up -d",
     "down": "sudo docker-compose down",

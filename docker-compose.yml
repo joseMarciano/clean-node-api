@@ -19,8 +19,10 @@ services:
     image: clean-node-api
     volumes:
       - ./dist:/usr/workspace/clean-node-api/dist
-    command: npm start
+      - ./package.json:/usr/workspace/clean-node-api/package.json
+    command: npm run debug
     ports:
       - "5050:5050"
+      - "9222:9222"
     links: 
       - mongo
