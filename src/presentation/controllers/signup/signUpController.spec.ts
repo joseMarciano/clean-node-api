@@ -1,6 +1,6 @@
 import { SignUpController } from './SignUpController';
-import { InvalidParamError, MissingParamError, ServerError } from '../../errors';
-import { badRequest, ok, serverError } from '../../helpers/httpHelper';
+import { EmailInUseError, InvalidParamError, MissingParamError, ServerError } from '../../errors';
+import { badRequest, forbidden, ok, serverError } from '../../helpers/httpHelper';
 import { Authentication, AuthenticationModel, EmailValidator, AddAccount, AddAccountModel, HttpRequest, AccountModel } from './signupProtocols';
 
 const makeEmailValidator = (): EmailValidator => {
@@ -242,5 +242,17 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.handle(httpRequest);
 
     expect(httpResponse).toEqual(serverError(new Error()));
-  })
+  });
+
+  test('Should return 403 if AddAccount returns null', async () => {
+    const { sut, addAccountStub } = makeSut();
+
+    jest.spyOn(addAccountStub, 'add').mockResolvedValueOnce(null);
+
+    const httpRequest = makeFakeRequest();
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
+  });
 });
