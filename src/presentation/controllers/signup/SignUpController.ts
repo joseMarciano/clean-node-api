@@ -1,5 +1,5 @@
-import { InvalidParamError, MissingParamError } from '../../errors';
-import { badRequest, serverError, ok } from '../../helpers/httpHelper'
+import { EmailInUseError, InvalidParamError, MissingParamError } from '../../errors';
+import { badRequest, serverError, ok, forbidden } from '../../helpers/httpHelper'
 import { Controller, EmailValidator, HttpResponse, HttpRequest, AddAccount, Authentication } from './signupProtocols';
 
 export class SignUpController implements Controller {
@@ -29,11 +29,15 @@ export class SignUpController implements Controller {
       const isValid = this.emailValidator.isValid(email);
       if (!isValid) return badRequest(new InvalidParamError('email'));
 
-      await this.addAccount.add({
+      const account = await this.addAccount.add({
         name,
         email,
         password
       });
+
+      if (!account) {
+        return forbidden(new EmailInUseError());
+      }
 
       const accessToken = await this.authentication.auth({
         email,
