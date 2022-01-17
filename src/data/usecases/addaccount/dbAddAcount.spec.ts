@@ -1,10 +1,12 @@
 import { AccountModel, AddAccountModel, Hasher, AddAccountRepository } from './dbAddAccountProtocols';
 import { DbAddAccount } from './DbAddAccount';
+import { LoadAccountByEmailRepository } from '../authentication/dbAuthenticationProtocols';
 
 interface SutTypes {
   sut: DbAddAccount
   hasherStub: Hasher
   addAccountRepositoryStub: AddAccountRepository
+  loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
 }
 
 const makeHasher = (): Hasher => {
@@ -42,15 +44,27 @@ const makeAddAccountRepository = (): AddAccountRepository => {
   return new AddAccountRepositoryStub();
 }
 
+const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
+  class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
+    async loadByEmail (email: string): Promise<AccountModel> {
+      return Promise.resolve(makeFakeAccount())
+    }
+  }
+
+  return new LoadAccountByEmailRepositoryStub();
+}
+
 const makeSut = (): SutTypes => {
   const hasherStub = makeHasher();
   const addAccountRepositoryStub = makeAddAccountRepository();
-  const sut = new DbAddAccount(hasherStub, addAccountRepositoryStub);
+  const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository();
+  const sut = new DbAddAccount(hasherStub, addAccountRepositoryStub, loadAccountByEmailRepositoryStub);
 
   return {
     sut,
     hasherStub,
-    addAccountRepositoryStub
+    addAccountRepositoryStub,
+    loadAccountByEmailRepositoryStub
   }
 };
 
@@ -105,5 +119,17 @@ describe('DbAddAccount use case', () => {
     const account = await sut.add(accountData);
 
     expect(account).toEqual(makeFakeAccount());
+  });
+
+  test('Should call LoadAccountByEmailRepository with correct email', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+
+    const loadByEmailSpy = jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail');
+
+    const accountData = makeFakeAccountData();
+
+    await sut.add(accountData);
+
+    expect(loadByEmailSpy).toHaveBeenLastCalledWith('valid_email@mail.com');
   });
 });
