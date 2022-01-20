@@ -32,10 +32,17 @@ const ok = (body: any): HttpResponse =>
     body: body
   });
 
+const noContent = (): HttpResponse =>
+  ({
+    statusCode: 204,
+    body: null
+  });
+
 export {
   badRequest,
   serverError,
   ok,
   unauthorized,
-  forbidden
+  forbidden,
+  noContent
 }
