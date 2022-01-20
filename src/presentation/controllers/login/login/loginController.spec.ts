@@ -1,6 +1,6 @@
 import { HttpRequest, Authentication, EmailValidator, AuthenticationModel } from './loginProtocols';
-import { InvalidParamError, MissingParamError } from '../../errors';
-import { badRequest, ok, serverError, unauthorized } from '../../helpers/httpHelper';
+import { InvalidParamError, MissingParamError } from '../../../errors';
+import { badRequest, ok, serverError, unauthorized } from '../../../helpers/httpHelper';
 import { LoginController } from './LoginController';
 
 const makeAuthenticaction = (): Authentication => {
