@@ -1,12 +1,12 @@
+import { AddSurvey, AddSurveyModel, HttpRequest, Validation } from './addSurveyControllerProtocols';
 import { badRequest } from '../../../helpers/httpHelper';
 import { AddSurveyController } from './AddSurveyController';
-import { HttpRequest, Validation } from './addSurveyControllerProtocols';
 
 const makeFakeRequest = (): HttpRequest => {
   return {
     body: {
       question: 'any_question',
-      aswers: [{
+      answers: [{
         image: 'any_image',
         answer: 'any_answer'
       }]
@@ -14,9 +14,13 @@ const makeFakeRequest = (): HttpRequest => {
   }
 }
 
-interface SutTypes {
-  sut: AddSurveyController
-  validationStub: Validation
+const makeAddSurveyStub = (): AddSurvey => {
+  class AddSurveyStub implements AddSurvey {
+    async add (survey: AddSurveyModel): Promise<void> {
+      return await Promise.resolve()
+    }
+  }
+  return new AddSurveyStub();
 }
 
 const makeValidationStub = (): Validation => {
@@ -29,13 +33,21 @@ const makeValidationStub = (): Validation => {
   return new ValidationStub();
 }
 
+interface SutTypes {
+  sut: AddSurveyController
+  validationStub: Validation
+  addSurveyStub: AddSurvey
+}
+
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationStub();
-  const sut = new AddSurveyController(validationStub);
+  const addSurveyStub = makeAddSurveyStub();
+  const sut = new AddSurveyController(validationStub, addSurveyStub);
 
   return {
     sut,
-    validationStub
+    validationStub,
+    addSurveyStub
   }
 }
 
@@ -58,5 +70,15 @@ describe('AddSurveyController', () => {
     const httpResponse = await sut.handle(makeFakeRequest());
 
     expect(httpResponse).toEqual(badRequest(new Error()));
-  })
+  });
+
+  test('Should call AddSurvey with correct values', async () => {
+    const { sut, addSurveyStub } = makeSut();
+
+    const addSpy = jest.spyOn(addSurveyStub, 'add');
+    const httpRequest = makeFakeRequest();
+    await sut.handle(httpRequest);
+
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body);
+  });
 });
