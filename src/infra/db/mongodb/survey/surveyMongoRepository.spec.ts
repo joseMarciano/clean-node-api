@@ -39,7 +39,7 @@ describe('SurveyMongoRespository', () => {
 
     await sut.add(makeFakeSurveyModel());
     const answerSaved = await surveyCollection.findOne({});
-    console.log(answerSaved)
+
     expect(answerSaved).toBeTruthy();
     expect(answerSaved._id).toBeTruthy();
     expect(answerSaved.question).toBe('any_question');
