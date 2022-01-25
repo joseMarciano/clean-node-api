@@ -32,10 +32,10 @@ const makeAddSurveyRepository = (): AddSurveyRepository => {
 const makeFakeSurveyModel = (): AddSurveyModel => {
   return {
     question: 'any_question',
-    answers: {
+    answers: [{
       answer: 'any_answer',
       image: 'any_image'
-    }
+    }]
   }
 }
 

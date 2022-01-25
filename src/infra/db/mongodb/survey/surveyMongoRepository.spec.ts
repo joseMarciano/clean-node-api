@@ -11,10 +11,10 @@ const makeSut = (): AddSurveyRepository => {
 const makeFakeSurveyModel = (): AddSurveyModel => {
   return {
     question: 'any_question',
-    answers: {
+    answers: [{
       answer: 'any_answer',
       image: 'any_image'
-    }
+    }]
   }
 }
 
@@ -43,9 +43,9 @@ describe('SurveyMongoRespository', () => {
     expect(answerSaved).toBeTruthy();
     expect(answerSaved._id).toBeTruthy();
     expect(answerSaved.question).toBe('any_question');
-    expect(answerSaved.answers).toEqual({
+    expect(answerSaved.answers).toEqual([{
       answer: 'any_answer',
       image: 'any_image'
-    });
+    }]);
   });
 });
