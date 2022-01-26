@@ -1,6 +1,6 @@
 import { LoadAccountByToken } from '../../../domain/usecases/LoadAccountByToken';
 import { AccessDeniedError } from '../../errors';
-import { forbidden, ok } from '../../helpers/httpHelper';
+import { forbidden, ok, serverError } from '../../helpers/httpHelper';
 import { HttpRequest, HttpResponse } from '../../protocols';
 import { Auth } from '../../protocols/Auth';
 
@@ -10,14 +10,18 @@ export class AuthController implements Auth {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const accessToken = httpRequest?.headers?.['x-access-token']
+    try {
+      const accessToken = httpRequest?.headers?.['x-access-token']
 
-    if (accessToken) {
-      const account = await this.loadAccountByToken.load(httpRequest.headers?.['x-access-token'])
+      if (accessToken) {
+        const account = await this.loadAccountByToken.load(httpRequest.headers?.['x-access-token'])
 
-      if (account) { return ok({ accountId: account.id }) }
+        if (account) { return ok({ accountId: account.id }) }
+      }
+
+      return forbidden(new AccessDeniedError())
+    } catch (error) {
+      return serverError(error)
     }
-
-    return forbidden(new AccessDeniedError())
   }
 }

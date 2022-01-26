@@ -1,6 +1,6 @@
 import { LoadAccountByToken } from '../../../domain/usecases/LoadAccountByToken';
 import { AccessDeniedError } from '../../errors';
-import { forbidden, ok } from '../../helpers/httpHelper';
+import { forbidden, ok, serverError } from '../../helpers/httpHelper';
 import { HttpRequest } from '../../protocols';
 import { Auth } from '../../protocols/Auth'
 import { AccountModel } from '../login/signup/signupProtocols';
@@ -91,5 +91,20 @@ describe('AuthController', () => {
     expect(httpResponse).toEqual(ok({
       accountId: 'valid_id'
     }))
+  })
+  test('Should return 500 if LoadAccountByToken throws', async () => {
+    const { sut, loadAccountByTokenStub } = makeSut();
+
+    const httpRequest: HttpRequest = {
+      headers: {
+        'x-access-token': 'any_token'
+      }
+    }
+
+    jest.spyOn(loadAccountByTokenStub, 'load').mockImplementationOnce(() => { throw new Error() })
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
