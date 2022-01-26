@@ -1,13 +1,13 @@
 import { LoadAccountByToken } from '../../../domain/usecases/LoadAccountByToken';
 import { AccessDeniedError } from '../../errors';
-import { forbidden } from '../../helpers/httpHelper';
+import { forbidden, ok } from '../../helpers/httpHelper';
 import { HttpRequest } from '../../protocols';
 import { Auth } from '../../protocols/Auth'
 import { AccountModel } from '../login/signup/signupProtocols';
 import { AuthController } from './AuthController';
 
 const makeFakeAccount = (): AccountModel => ({
-  id: 'any_id',
+  id: 'valid_id',
   email: 'any_email',
   name: 'any_name',
   password: 'any_password'
@@ -76,5 +76,20 @@ describe('AuthController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+  })
+
+  test('Should return 200 if LoadAccountByToken retuns an account', async () => {
+    const { sut } = makeSut();
+
+    const httpRequest: HttpRequest = {
+      headers: {
+        'x-access-token': 'any_token'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(ok({
+      accountId: 'valid_id'
+    }))
   })
 })
