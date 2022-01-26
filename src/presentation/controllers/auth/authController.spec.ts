@@ -27,9 +27,9 @@ interface SutTypes {
   sut: Auth
   loadAccountByTokenStub: LoadAccountByToken
 }
-const makeSut = (): SutTypes => {
+const makeSut = (role?: string): SutTypes => {
   const loadAccountByTokenStub = makeLoadAccountByToken()
-  const sut = new AuthController(loadAccountByTokenStub);
+  const sut = new AuthController(loadAccountByTokenStub, role);
 
   return {
     sut,
@@ -47,7 +47,7 @@ describe('AuthController', () => {
   })
 
   test('Should return call LoadAccountByToken with correct access-token', async () => {
-    const { sut, loadAccountByTokenStub } = makeSut();
+    const { sut, loadAccountByTokenStub } = makeSut('any_role');
 
     const httpRequest: HttpRequest = {
       headers: {
@@ -59,7 +59,7 @@ describe('AuthController', () => {
 
     await sut.handle(httpRequest)
 
-    expect(loadSpy).toHaveBeenCalledWith('any_token')
+    expect(loadSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
 
   test('Should return 403 if LoadAccountByToken retuns null', async () => {
