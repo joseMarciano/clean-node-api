@@ -6,7 +6,8 @@ import { Auth } from '../../protocols/Auth';
 
 export class AuthController implements Auth {
   constructor (
-    private readonly loadAccountByToken: LoadAccountByToken
+    private readonly loadAccountByToken: LoadAccountByToken,
+    private readonly role?: string
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -14,7 +15,7 @@ export class AuthController implements Auth {
       const accessToken = httpRequest?.headers?.['x-access-token']
 
       if (accessToken) {
-        const account = await this.loadAccountByToken.load(httpRequest.headers?.['x-access-token'])
+        const account = await this.loadAccountByToken.load(httpRequest.headers?.['x-access-token'], this.role)
 
         if (account) { return ok({ accountId: account.id }) }
       }
