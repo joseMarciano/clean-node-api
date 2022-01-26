@@ -1,8 +1,7 @@
-import { LoadAccountByToken } from '../../../domain/usecases/LoadAccountByToken';
 import { AccessDeniedError } from '../../errors';
 import { forbidden, ok, serverError } from '../../helpers/httpHelper';
-import { HttpRequest, HttpResponse } from '../../protocols';
-import { Auth } from '../../protocols/Auth';
+import { HttpRequest, HttpResponse, Auth } from '../../protocols';
+import { LoadAccountByToken } from './authControllerProtocols';
 
 export class AuthController implements Auth {
   constructor (
