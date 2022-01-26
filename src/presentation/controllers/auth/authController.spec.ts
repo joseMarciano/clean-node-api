@@ -61,4 +61,20 @@ describe('AuthController', () => {
 
     expect(loadSpy).toHaveBeenCalledWith('any_token')
   })
+
+  test('Should return 403 if LoadAccountByToken retuns null', async () => {
+    const { sut, loadAccountByTokenStub } = makeSut();
+
+    const httpRequest: HttpRequest = {
+      headers: {
+        'x-access-token': 'any_token'
+      }
+    }
+
+    jest.spyOn(loadAccountByTokenStub, 'load').mockResolvedValue(null)
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+  })
 })
