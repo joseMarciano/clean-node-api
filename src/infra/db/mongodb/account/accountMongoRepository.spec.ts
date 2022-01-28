@@ -89,21 +89,24 @@ describe('Account Mongo Repository', () => {
     });
   })
 
-  // describe('INTERFACE LoadAccountByTokenRepository', () => {
-  //   test('Should load an account by token on loadByToken success', async () => {
-  //     const sut = makeSut();
+  describe('INTERFACE LoadAccountByTokenRepository', () => {
+    test('Should load an account by token on loadByToken without role success', async () => {
+      const sut = makeSut();
 
-  //     const result = await accountCollection.insertOne({
-  //       name: 'any_name',
-  //       email: 'any_mail@email.com',
-  //       password: 'any_password',
-  //       token: 'any_token'
-  //     });
+      await accountCollection.insertOne({
+        name: 'any_name',
+        email: 'any_mail@email.com',
+        password: 'any_password',
+        accessToken: 'any_token'
+      });
 
-  //     const account = await sut.loadByToken('any_token', 'any_role')
+      const account = await sut.loadByToken('any_token')
 
-  //     expect(account).toBeTruthy()
-  //     expect(account.id).toBe(result.insertedId)
-  //   })
-  // })
+      expect(account).toBeTruthy();
+      expect(account.id).toBeTruthy();
+      expect(account.name).toBe('any_name');
+      expect(account.email).toBe('any_mail@email.com');
+      expect(account.password).toBe('any_password');
+    })
+  })
 });
