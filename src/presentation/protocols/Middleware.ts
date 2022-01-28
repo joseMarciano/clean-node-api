@@ -1,6 +1,5 @@
-import { Controller } from '.';
 import { HttpRequest, HttpResponse } from './Http';
 
-export interface Auth extends Controller {
+export interface Middleware {
   handle (httpRequest: HttpRequest): Promise<HttpResponse>
 }

@@ -1,9 +1,9 @@
 import { AccessDeniedError } from '../../errors';
 import { forbidden, ok, serverError } from '../../helpers/httpHelper';
-import { HttpRequest, HttpResponse, Auth } from '../../protocols';
+import { HttpRequest, HttpResponse, Middleware } from '../../protocols';
 import { LoadAccountByToken } from './authControllerProtocols';
 
-export class AuthController implements Auth {
+export class AuthController implements Middleware {
   constructor (
     private readonly loadAccountByToken: LoadAccountByToken,
     private readonly role?: string

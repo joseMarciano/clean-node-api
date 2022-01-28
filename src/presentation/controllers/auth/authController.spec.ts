@@ -1,7 +1,7 @@
 import { AccessDeniedError } from '../../errors';
 import { forbidden, ok, serverError } from '../../helpers/httpHelper';
 import { AuthController } from './AuthController';
-import { HttpRequest, Auth } from '../../protocols';
+import { HttpRequest, Middleware } from '../../protocols';
 import { AccountModel, LoadAccountByToken } from './authControllerProtocols';
 
 const makeFakeAccount = (): AccountModel => ({
@@ -22,7 +22,7 @@ const makeLoadAccountByToken = (): LoadAccountByToken => {
 }
 
 interface SutTypes {
-  sut: Auth
+  sut: Middleware
   loadAccountByTokenStub: LoadAccountByToken
 }
 const makeSut = (role?: string): SutTypes => {
