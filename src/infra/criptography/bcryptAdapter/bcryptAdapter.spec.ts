@@ -17,63 +17,62 @@ jest.mock('bcrypt', () => ({
 }));
 
 describe('BcryptAdapter', () => {
-  test('Should call hash with correct values', async () => {
-    const sut = makeSut();
+  describe('interface HASHER', () => {
+    test('Should call hash with correct values', async () => {
+      const sut = makeSut();
+      const hashSpy = jest.spyOn(bcrypt, 'hash');
+      await sut.hash('any_value');
 
-    const hashSpy = jest.spyOn(bcrypt, 'hash');
+      expect(hashSpy).toHaveBeenCalledWith('any_value', SALT);
+    });
 
-    await sut.hash('any_value');
+    test('Should return valid hash on hash success', async () => {
+      const sut = makeSut();
+      const hash = await sut.hash('any_value');
 
-    expect(hashSpy).toHaveBeenCalledWith('any_value', SALT);
-  });
+      expect(hash).toBe('hash_value');
+    });
 
-  test('Should return valid hash on hash success', async () => {
-    const sut = makeSut();
+    test('Should throw if hash throws', async () => {
+      const sut = makeSut();
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      jest.spyOn(bcrypt, 'hash').mockImplementationOnce(async () => await Promise.reject(new Error()))
+      const promise = sut.hash('any_value');
+      await expect(promise).rejects.toThrow();
+    });
+  })
 
-    const hash = await sut.hash('any_value');
+  describe('interface HASHCOMPARE', () => {
+    test('Should call compare with correct values', async () => {
+      const sut = makeSut();
+      const compareSpy = jest.spyOn(bcrypt, 'compare');
+      await sut.compare('any_value', 'any_hash');
 
-    expect(hash).toBe('hash_value');
-  });
+      expect(compareSpy).toHaveBeenCalledWith('any_value', 'any_hash');
+    });
 
-  test('Should throw if hash throws', async () => {
-    const sut = makeSut();
+    test('Should return true when compare succeeds', async () => {
+      const sut = makeSut();
+      const isValid = await sut.compare('any_value', 'any_hash');
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    jest.spyOn(bcrypt, 'hash').mockImplementationOnce(async () => await Promise.reject(new Error()))
-    const promise = sut.hash('any_value');
-    await expect(promise).rejects.toThrow();
-  });
+      expect(isValid).toBe(true);
+    });
+    test('Should return false when compare fails', async () => {
+      const sut = makeSut();
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => await Promise.resolve(false));
+      const isValid = await sut.compare('any_value', 'any_hash');
 
-  test('Should call compare with correct values', async () => {
-    const sut = makeSut();
+      expect(isValid).toBe(false);
+    });
 
-    const compareSpy = jest.spyOn(bcrypt, 'compare');
-    await sut.compare('any_value', 'any_hash');
+    test('Should throw if compare throws', async () => {
+      const sut = makeSut();
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => await Promise.reject(new Error()))
+      const promise = sut.compare('any_value', 'any_hash');
 
-    expect(compareSpy).toHaveBeenCalledWith('any_value', 'any_hash');
-  });
-
-  test('Should return true when compare succeeds', async () => {
-    const sut = makeSut();
-    const isValid = await sut.compare('any_value', 'any_hash');
-    expect(isValid).toBe(true);
-  });
-  test('Should return false when compare fails', async () => {
-    const sut = makeSut();
-
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    jest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => await Promise.resolve(false));
-
-    const isValid = await sut.compare('any_value', 'any_hash');
-    expect(isValid).toBe(false);
-  });
-
-  test('Should throw if compare throws', async () => {
-    const sut = makeSut();
-
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    jest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => await Promise.reject(new Error()))
-    const promise = sut.compare('any_value', 'any_hash');
-    await expect(promise).rejects.toThrow();
-  });
+      await expect(promise).rejects.toThrow();
+    });
+  })
 });
