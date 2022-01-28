@@ -88,4 +88,22 @@ describe('Account Mongo Repository', () => {
       expect(accountUpdated.accessToken).toBe('any_token');
     });
   })
+
+  // describe('INTERFACE LoadAccountByTokenRepository', () => {
+  //   test('Should load an account by token on loadByToken success', async () => {
+  //     const sut = makeSut();
+
+  //     const result = await accountCollection.insertOne({
+  //       name: 'any_name',
+  //       email: 'any_mail@email.com',
+  //       password: 'any_password',
+  //       token: 'any_token'
+  //     });
+
+  //     const account = await sut.loadByToken('any_token', 'any_role')
+
+  //     expect(account).toBeTruthy()
+  //     expect(account.id).toBe(result.insertedId)
+  //   })
+  // })
 });
