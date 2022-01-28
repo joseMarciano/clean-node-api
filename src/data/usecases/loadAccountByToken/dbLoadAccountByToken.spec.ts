@@ -1,6 +1,17 @@
-import { LoadAccountByToken } from '../../../domain/usecases/LoadAccountByToken'
-import { Decrypter } from '../../protocols/criptography/Decrypter'
 import { DbLoadAccountByToken } from './DbLoadAccountByToken'
+import {
+  Decrypter,
+  AccountModel,
+  LoadAccountByTokenRepository,
+  LoadAccountByToken
+} from './dbLoadAccountByTokenProtocols'
+
+const makeFakeAccountModel = (): AccountModel => ({
+  id: 'any_id',
+  email: 'any_email',
+  name: 'any_name',
+  password: 'any_password'
+})
 
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
@@ -12,17 +23,30 @@ const makeDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
+const makeLoadAccountByTokenRepository = (): LoadAccountByTokenRepository => {
+  class LoadAccountByTokenRepositoryStub implements LoadAccountByTokenRepository {
+    async loadByToken (_token: string, _role?: string): Promise<AccountModel> {
+      return Promise.resolve(makeFakeAccountModel())
+    }
+  }
+
+  return new LoadAccountByTokenRepositoryStub();
+}
+
 interface SutTypes {
   sut: LoadAccountByToken
   decrypterStub: Decrypter
+  loadAccountByTokenRepositoryStub: LoadAccountByTokenRepository
 }
 const makeSut = (): SutTypes => {
+  const loadAccountByTokenRepositoryStub = makeLoadAccountByTokenRepository()
   const decrypterStub = makeDecrypter()
-  const sut = new DbLoadAccountByToken(decrypterStub)
+  const sut = new DbLoadAccountByToken(decrypterStub, loadAccountByTokenRepositoryStub)
 
   return {
     sut,
-    decrypterStub
+    decrypterStub,
+    loadAccountByTokenRepositoryStub
   }
 }
 
@@ -35,6 +59,15 @@ describe('DbLoadAccountByToken usecase', () => {
     await sut.load('any_token', 'any_role')
 
     expect(decryptSpy).toHaveBeenCalledWith('any_token')
+  })
+  test('Should call LoadAccountByTokenRepository with correct values', async () => {
+    const { sut, loadAccountByTokenRepositoryStub } = makeSut();
+
+    const loadSpy = jest.spyOn(loadAccountByTokenRepositoryStub, 'loadByToken')
+
+    await sut.load('any_token', 'any_role')
+
+    expect(loadSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
   test('Should return null if Decrypter returns null', async () => {
     const { sut, decrypterStub } = makeSut();
